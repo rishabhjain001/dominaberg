@@ -36,6 +36,15 @@ SEVERITY_BY_CLASS = {
     "pavement_damage": (1, 2),
 }
 
+# Radius range drawn per class, in metres.
+RADIUS_BY_CLASS = {
+    "pothole": (0.45, 1.05),
+    "missing_cover": (0.45, 0.62),
+    "waterlogging": (1.6, 3.2),
+    "debris": (0.9, 1.7),
+    "pavement_damage": (0.8, 1.6),
+}
+
 
 @dataclass(frozen=True)
 class Road:
@@ -195,16 +204,7 @@ def _anomalies(seed: int, roads: list[Road]) -> list[Anomaly]:
                 continue
             x, y = spot
             placed.append((x, y))
-            if kind == "pothole":
-                radius = rng.uniform(0.45, 1.05)
-            elif kind == "missing_cover":
-                radius = rng.uniform(0.45, 0.62)
-            elif kind == "waterlogging":
-                radius = rng.uniform(1.6, 3.2)
-            elif kind == "debris":
-                radius = rng.uniform(0.9, 1.7)
-            else:
-                radius = rng.uniform(0.8, 1.6)
+            radius = rng.uniform(*RADIUS_BY_CLASS[kind])
             lo, hi = SEVERITY_BY_CLASS[kind]
             severity = rng.randint(lo, hi)
             out.append(

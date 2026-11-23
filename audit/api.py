@@ -146,8 +146,8 @@ async def set_speed(mission_id: str, req: SpeedRequest):
 
 @app.get("/api/missions/{mission_id}/evaluation")
 async def get_evaluation(mission_id: str):
-    _pump(_mission(mission_id))
     mission = _mission(mission_id)
+    _pump(mission)
     if mission.status != "complete":
         raise HTTPException(status_code=409, detail="mission not complete")
     return {

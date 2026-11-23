@@ -25,10 +25,6 @@ class Plan:
         }
 
 
-def _distance(a: tuple[float, float], b: tuple[float, float]) -> float:
-    return math.hypot(b[0] - a[0], b[1] - a[1])
-
-
 def plan_coverage(world: World, altitude_m: float, overlap: float = 0.35) -> Plan:
     """Plan lanes across the world with `overlap` fraction of side overlap."""
     _, swath_h = footprint_m(altitude_m)
@@ -53,9 +49,7 @@ def plan_coverage(world: World, altitude_m: float, overlap: float = 0.35) -> Pla
         waypoints.append((start_x, lane_y))
         waypoints.append((end_x, lane_y))
 
-    length = 0.0
-    for a, b in zip(waypoints, waypoints[1:]):
-        length += _distance(a, b)
+    length = sum(math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(waypoints, waypoints[1:]))
 
     # One frame roughly every 1.6 camera heights keeps ground overlap between
     # consecutive frames comfortably above 60 percent.

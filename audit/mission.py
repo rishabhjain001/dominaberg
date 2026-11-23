@@ -16,7 +16,7 @@ from dataclasses import dataclass, field
 import cv2
 
 from .detect import Detection, detect_tile
-from .geo import enu_to_latlon, haversine_m
+from .geo import enu_to_latlon
 from .plan import Plan, plan_coverage
 from .render import Camera, render_tile
 from .world import World, build_world
@@ -93,7 +93,6 @@ class Mission:
         self.frames_captured = 0
         self.detections: list[Track] = []  # confirmed tracks only
         self._tracks: list[Track] = []
-        self.false_candidates = 0
         self.log: list[dict] = []
 
         # Route as a dense polyline so the flown path is easy to draw.
@@ -104,7 +103,6 @@ class Mission:
         self.flown: list[tuple[float, float]] = [(self.pose[0], self.pose[1])]
         self._since_capture = 1e9
         self._returning = False
-        self._frames_at_last_capture = 0
 
     # ------------------------------------------------------------------ state
     def snapshot(self) -> dict:
@@ -231,7 +229,6 @@ class Mission:
         x, y, heading = self.pose
         img = render_tile(self.world, x, y, heading, self.camera)
         self.frames_captured += 1
-        self._frames_at_last_capture = self.frames_captured
 
         for det in detect_tile(img, self.camera):
             wx, wy = self.camera.px_to_world(*det.center_px, x, y, heading)
@@ -260,31 +257,24 @@ class Mission:
             if not matched:
                 continue
 
-            if not t.confirmed:
-                t.hits += 1
-                t.x = (t.x * (t.hits - 1) + wx) / t.hits
-                t.y = (t.y * (t.hits - 1) + wy) / t.hits
-                if det.confidence > t.confidence:
-                    t.confidence = det.confidence
-                    t.cls = det.cls
-                    t.crop = _crop_data_url(img, det)
-                if t.hits >= CONFIRM_HITS:
-                    t.confirmed = True
-                    t.id = f"D-{len(self.detections) + 1:03d}"
-                    lat, lon = enu_to_latlon(t.x, t.y, self.world.origin_lat, self.world.origin_lon)
-                    t.lat, t.lon = lat, lon
-                    self.detections.append(t)
-                    self._merge_confirmed(t)
-                    return t
-                return None
-
             t.hits += 1
-            if same_class:
+            if not t.confirmed or same_class:
                 t.x = (t.x * (t.hits - 1) + wx) / t.hits
                 t.y = (t.y * (t.hits - 1) + wy) / t.hits
                 if det.confidence > t.confidence:
                     t.confidence = det.confidence
                     t.crop = _crop_data_url(img, det)
+                    if not t.confirmed:
+                        t.cls = det.cls
+            if t.confirmed:
+                return None
+            if t.hits >= CONFIRM_HITS:
+                t.confirmed = True
+                t.id = f"D-{len(self.detections) + 1:03d}"
+                t.lat, t.lon = enu_to_latlon(t.x, t.y, self.world.origin_lat, self.world.origin_lon)
+                self.detections.append(t)
+                self._merge_confirmed(t)
+                return t
             return None
 
         lat, lon = enu_to_latlon(wx, wy, self.world.origin_lat, self.world.origin_lon)
@@ -321,8 +311,7 @@ class Mission:
                 track.hits += other.hits
                 track.confidence = max(track.confidence, other.confidence)
                 self.detections.remove(other)
-                if other in self._tracks:
-                    self._tracks.remove(other)
+                self._tracks.remove(other)
 
     def _finish(self, events: list[dict]) -> None:
         self.status = "complete"

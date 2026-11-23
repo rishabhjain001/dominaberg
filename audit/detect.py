@@ -44,6 +44,18 @@ class Detection:
         return self.u + self.w / 2.0, self.v + self.h / 2.0
 
 
+def _detection(cls: str, comp: dict, confidence: float, area_m2: float) -> Detection:
+    return Detection(
+        cls=cls,
+        u=comp["x"],
+        v=comp["y"],
+        w=comp["w"],
+        h=comp["h"],
+        confidence=round(confidence, 3),
+        area_m2=round(area_m2, 2),
+    )
+
+
 def road_mask(gray: np.ndarray) -> np.ndarray:
     """Boolean carriageway estimate.
 
@@ -119,23 +131,35 @@ def _background(gray: np.ndarray) -> np.ndarray:
     return np.maximum(near, far)
 
 
+def _patch(gray: np.ndarray, comp: dict, centroid: tuple[float, float], half: int):
+    """Clip the neighbourhood around a blob to the frame bounds.
+
+    Returns the patch and the centroid's coordinates inside it.
+    """
+    x0 = max(0, int(centroid[0]) - half)
+    y0 = max(0, int(centroid[1]) - half)
+    x1 = min(gray.shape[1], int(centroid[0]) + half)
+    y1 = min(gray.shape[0], int(centroid[1]) + half)
+    return gray[y0:y1, x0:x1], centroid[0] - x0, centroid[1] - y0
+
+
+def _blob_radius(comp: dict) -> float:
+    return max(3.0, float(np.sqrt(comp["hull_px"] / np.pi)))
+
+
 def _ring_ratio(gray: np.ndarray, comp: dict, centroid: tuple[float, float]) -> float:
     """Brightness of the surroundings relative to the blob interior.
 
     A missing cover is a dark hole inside a bright collar, so the ratio is well
     above one. A plain pothole reads close to one.
     """
-    r = max(3.0, float(np.sqrt(comp["hull_px"] / np.pi)))
+    r = _blob_radius(comp)
     half = int(max(comp["w"], comp["h"]) * 0.85) + 3
-    x0 = max(0, int(centroid[0]) - half)
-    x1 = min(gray.shape[1], int(centroid[0]) + half)
-    y0 = max(0, int(centroid[1]) - half)
-    y1 = min(gray.shape[0], int(centroid[1]) + half)
-    if x1 - x0 < 6 or y1 - y0 < 6:
+    patch, ox, oy = _patch(gray, comp, centroid, half)
+    if patch.shape[0] < 6 or patch.shape[1] < 6:
         return 1.0
-    patch = gray[y0:y1, x0:x1].astype(np.float32)
     yy, xx = np.mgrid[0 : patch.shape[0], 0 : patch.shape[1]]
-    d = np.hypot(xx - (centroid[0] - x0), yy - (centroid[1] - y0))
+    d = np.hypot(xx - ox, yy - oy)
     inner = patch[d <= r * 0.7]
     ring = patch[(d > r * 1.15) & (d <= r * 1.6)]
     if inner.size == 0 or ring.size < 8:
@@ -149,17 +173,12 @@ def _solid_fraction(gray: np.ndarray, comp: dict, centroid: tuple[float, float])
     A filled pool or hole covers most of its footprint. A crack network is thin
     lines, so asphalt dominates the area between its branches.
     """
-    r = max(3.0, float(np.sqrt(comp["hull_px"] / np.pi)))
-    half = int(r) + 2
-    x0 = max(0, int(centroid[0]) - half)
-    x1 = min(gray.shape[1], int(centroid[0]) + half)
-    y0 = max(0, int(centroid[1]) - half)
-    y1 = min(gray.shape[0], int(centroid[1]) + half)
-    if x1 - x0 < 4 or y1 - y0 < 4:
+    r = _blob_radius(comp)
+    patch, ox, oy = _patch(gray, comp, centroid, int(r) + 2)
+    if patch.shape[0] < 4 or patch.shape[1] < 4:
         return 1.0
-    patch = gray[y0:y1, x0:x1]
     yy, xx = np.mgrid[0 : patch.shape[0], 0 : patch.shape[1]]
-    inside = np.hypot(xx - (centroid[0] - x0), yy - (centroid[1] - y0)) <= r * 0.9
+    inside = np.hypot(xx - ox, yy - oy) <= r * 0.9
     if not inside.any():
         return 1.0
     return float((patch[inside] < 58).mean())
@@ -223,17 +242,7 @@ def detect_tile(img: np.ndarray, camera: Camera) -> list[Detection]:
             continue
 
         conf = float(np.clip(base * (0.80 + 0.30 * darkness), 0.3, 0.97))
-        detections.append(
-            Detection(
-                cls=cls,
-                u=s["x"],
-                v=s["y"],
-                w=s["w"],
-                h=s["h"],
-                confidence=round(conf, 3),
-                area_m2=round(hull_m2, 2),
-            )
-        )
+        detections.append(_detection(cls, s, conf, hull_m2))
 
     for s in _components(bright):
         if not _on_road(road, s):
@@ -246,17 +255,7 @@ def detect_tile(img: np.ndarray, camera: Camera) -> list[Detection]:
         patch = gray[s["y"] : s["y"] + s["h"], s["x"] : s["x"] + s["w"]]
         brightness = float(np.clip((patch.mean() - 115.0) / 90.0, 0.0, 1.0))
         conf = float(np.clip(0.60 + 0.35 * brightness, 0.3, 0.95))
-        detections.append(
-            Detection(
-                cls="debris",
-                u=s["x"],
-                v=s["y"],
-                w=s["w"],
-                h=s["h"],
-                confidence=round(conf, 3),
-                area_m2=round(hull_m2, 2),
-            )
-        )
+        detections.append(_detection("debris", s, conf, hull_m2))
 
     # A rubble pile casts a dark shadow; keep the pile and drop the shadow.
     piles = [d for d in detections if d.cls == "debris"]

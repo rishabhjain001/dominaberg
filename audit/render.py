@@ -100,11 +100,11 @@ def _draw_water(img, cam, an: Anomaly, heading, rng):
 
 def _draw_debris(img, cam, an: Anomaly, heading, rng):
     """A compact rubble pile: one bright irregular blob plus a few blocks."""
+    cx, cy = cam.world_to_px(an.x, an.y, *heading)
     r = an.radius_m / cam.m_per_px
     ang = np.linspace(0, 2 * math.pi, 12, endpoint=False)
     wobble = 1.0 + 0.30 * np.sin(ang * 2 + an.shape_seed % 11) + 0.15 * np.sin(ang * 4)
-    pts = np.stack([cx := (cam.world_to_px(an.x, an.y, *heading)[0] + r * wobble * np.cos(ang)),
-                    (cam.world_to_px(an.x, an.y, *heading)[1] + r * wobble * np.sin(ang))], axis=1).astype(np.int32)
+    pts = np.stack([cx + r * wobble * np.cos(ang), cy + r * wobble * np.sin(ang)], axis=1).astype(np.int32)
     cv2.fillPoly(img, [pts], (176, 172, 162))
     cv2.polylines(img, [pts], True, (120, 118, 112), 2, cv2.LINE_AA)
     for _ in range(5):
@@ -166,31 +166,16 @@ def render_tile(
 
     # Roads.
     for r in world.roads:
+        lo, hi = r.center_m - r.width_m / 2, r.center_m + r.width_m / 2
         if r.orientation == "h":
-            quad = np.array(
-                [
-                    big.world_to_px(r.from_m, r.center_m - r.width_m / 2, *heading),
-                    big.world_to_px(r.to_m, r.center_m - r.width_m / 2, *heading),
-                    big.world_to_px(r.to_m, r.center_m + r.width_m / 2, *heading),
-                    big.world_to_px(r.from_m, r.center_m + r.width_m / 2, *heading),
-                ],
-                dtype=np.int32,
-            )
+            corners = [(r.from_m, lo), (r.to_m, lo), (r.to_m, hi), (r.from_m, hi)]
         else:
-            quad = np.array(
-                [
-                    big.world_to_px(r.center_m - r.width_m / 2, r.from_m, *heading),
-                    big.world_to_px(r.center_m - r.width_m / 2, r.to_m, *heading),
-                    big.world_to_px(r.center_m + r.width_m / 2, r.to_m, *heading),
-                    big.world_to_px(r.center_m + r.width_m / 2, r.from_m, *heading),
-                ],
-                dtype=np.int32,
-            )
+            corners = [(lo, r.from_m), (lo, r.to_m), (hi, r.to_m), (hi, r.from_m)]
+        quad = np.array([big.world_to_px(x, y, *heading) for x, y in corners], dtype=np.int32)
         cv2.fillPoly(img, [quad], (72, 74, 78))
         cv2.polylines(img, [quad], True, (150, 152, 154), 2, cv2.LINE_AA)
 
         # Dashed centre line.
-        length = (r.to_m - r.from_m) if r.orientation == "v" else (r.to_m - r.from_m)
         step = 6.0
         s = r.from_m
         while s < r.to_m:
