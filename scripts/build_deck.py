@@ -210,7 +210,7 @@ def slide_solution(prs, page):
             "The operator does three things: choose a ward, press start, export the register. "
             "Everything between is the aircraft's job.\n\n"
             "Result on the reference ward: 100 % of the planned 2,224 m path flown, "
-            "23 of 23 discrepancies found, 0.22 m mean localization error.",
+            "23 of 23 discrepancies found, 0.23 m mean localization error.",
             size=13, color=BODY, spacing=1.35)
     footer(s, page)
 
@@ -397,7 +397,7 @@ def slide_trl(prs, page):
               ("TRL 6", "Two wards, engineer-reviewed pilot, signed report", False)]
     for i, (level, text, done) in enumerate(levels):
         y = Inches(1.95 + i * 0.95)
-        bar(s, Inches(0.7), y, Inches(1.1), Inches(0.62), ACCENT if done else Line_color())
+        bar(s, Inches(0.7), y, Inches(1.1), Inches(0.62), ACCENT if done else line_color())
         textbox(s, Inches(0.85), y + Inches(0.16), Inches(1.0), Inches(0.3), level, size=13,
                 color=WHITE if done else INK, bold=True)
         textbox(s, Inches(2.0), y + Inches(0.12), Inches(5.4), Inches(0.4), text, size=13, color=INK)
@@ -412,7 +412,7 @@ def slide_trl(prs, page):
     footer(s, page)
 
 
-def Line_color():
+def line_color():
     return RGBColor(0xE2, 0xE8, 0xF0)
 
 

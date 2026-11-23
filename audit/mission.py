@@ -243,9 +243,24 @@ class Mission:
         return events
 
     def _fuse(self, wx: float, wy: float, det: Detection, img) -> Track | None:
+        """Attach an observation to a track, or open a new one.
+
+        Pending tracks accept a nearby observation of any class, because a
+        single frame often mislabels a defect. A confirmed record keeps its
+        class: a different class within 1.5 m is treated as the same physical
+        defect seen differently, so it adds evidence but never a second record.
+        """
         for t in self._tracks:
-            reach = DEDUPE_RADIUS_M if t.confirmed else 1.6
-            if math.hypot(t.x - wx, t.y - wy) <= reach and (t.cls == det.cls or not t.confirmed):
+            distance = math.hypot(t.x - wx, t.y - wy)
+            same_class = t.cls == det.cls
+            if t.confirmed:
+                matched = distance <= (DEDUPE_RADIUS_M if same_class else 1.5)
+            else:
+                matched = distance <= 1.6
+            if not matched:
+                continue
+
+            if not t.confirmed:
                 t.hits += 1
                 t.x = (t.x * (t.hits - 1) + wx) / t.hits
                 t.y = (t.y * (t.hits - 1) + wy) / t.hits
@@ -253,14 +268,24 @@ class Mission:
                     t.confidence = det.confidence
                     t.cls = det.cls
                     t.crop = _crop_data_url(img, det)
-                if not t.confirmed and t.hits >= CONFIRM_HITS:
+                if t.hits >= CONFIRM_HITS:
                     t.confirmed = True
                     t.id = f"D-{len(self.detections) + 1:03d}"
                     lat, lon = enu_to_latlon(t.x, t.y, self.world.origin_lat, self.world.origin_lon)
                     t.lat, t.lon = lat, lon
                     self.detections.append(t)
+                    self._merge_confirmed(t)
                     return t
                 return None
+
+            t.hits += 1
+            if same_class:
+                t.x = (t.x * (t.hits - 1) + wx) / t.hits
+                t.y = (t.y * (t.hits - 1) + wy) / t.hits
+                if det.confidence > t.confidence:
+                    t.confidence = det.confidence
+                    t.crop = _crop_data_url(img, det)
+            return None
 
         lat, lon = enu_to_latlon(wx, wy, self.world.origin_lat, self.world.origin_lon)
         track = Track(
@@ -282,6 +307,22 @@ class Mission:
             self.detections.append(track)
             return track
         return None
+
+    def _merge_confirmed(self, track: Track) -> None:
+        """Collapse a second confirmed record of the same class at the same spot.
+
+        Two lobes of one large pool can each collect their own confirmation
+        sequence. The register must still hold one entry per physical defect.
+        """
+        for other in list(self.detections):
+            if other is track or other.cls != track.cls:
+                continue
+            if math.hypot(other.x - track.x, other.y - track.y) <= DEDUPE_RADIUS_M:
+                track.hits += other.hits
+                track.confidence = max(track.confidence, other.confidence)
+                self.detections.remove(other)
+                if other in self._tracks:
+                    self._tracks.remove(other)
 
     def _finish(self, events: list[dict]) -> None:
         self.status = "complete"

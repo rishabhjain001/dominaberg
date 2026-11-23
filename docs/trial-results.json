@@ -1,11 +1,11 @@
 [
   {
     "seed": 20261123,
-    "precision": 0.885,
+    "precision": 0.958,
     "recall": 1.0,
-    "f1": 0.939,
-    "localization_error_m": 0.16,
-    "reported": 26,
+    "f1": 0.979,
+    "localization_error_m": 0.2,
+    "reported": 24,
     "ground_truth": 23,
     "frames": 186,
     "coverage_pct": 100.0,
@@ -38,27 +38,27 @@
         "class": "pothole",
         "truth": 9,
         "matched": 9,
-        "false_positives": 2,
-        "precision": 0.818,
+        "false_positives": 1,
+        "precision": 0.9,
         "recall": 1.0
       },
       {
         "class": "waterlogging",
         "truth": 3,
         "matched": 3,
-        "false_positives": 1,
-        "precision": 0.75,
+        "false_positives": 0,
+        "precision": 1.0,
         "recall": 1.0
       }
     ]
   },
   {
     "seed": 7,
-    "precision": 0.76,
+    "precision": 0.792,
     "recall": 0.826,
-    "f1": 0.792,
+    "f1": 0.809,
     "localization_error_m": 0.22,
-    "reported": 25,
+    "reported": 24,
     "ground_truth": 23,
     "frames": 186,
     "coverage_pct": 100.0,
@@ -91,8 +91,8 @@
         "class": "pothole",
         "truth": 9,
         "matched": 5,
-        "false_positives": 2,
-        "precision": 0.714,
+        "false_positives": 1,
+        "precision": 0.833,
         "recall": 0.556
       },
       {
@@ -107,11 +107,11 @@
   },
   {
     "seed": 42,
-    "precision": 0.63,
+    "precision": 0.654,
     "recall": 0.739,
-    "f1": 0.68,
+    "f1": 0.694,
     "localization_error_m": 0.24,
-    "reported": 27,
+    "reported": 26,
     "ground_truth": 23,
     "frames": 186,
     "coverage_pct": 100.0,
@@ -144,8 +144,8 @@
         "class": "pothole",
         "truth": 9,
         "matched": 4,
-        "false_positives": 4,
-        "precision": 0.5,
+        "false_positives": 3,
+        "precision": 0.571,
         "recall": 0.444
       },
       {
@@ -213,11 +213,11 @@
   },
   {
     "seed": 99,
-    "precision": 0.731,
-    "recall": 0.826,
-    "f1": 0.776,
-    "localization_error_m": 0.21,
-    "reported": 26,
+    "precision": 0.708,
+    "recall": 0.739,
+    "f1": 0.723,
+    "localization_error_m": 0.23,
+    "reported": 24,
     "ground_truth": 23,
     "frames": 186,
     "coverage_pct": 100.0,
@@ -249,18 +249,18 @@
       {
         "class": "pothole",
         "truth": 9,
-        "matched": 5,
+        "matched": 4,
         "false_positives": 2,
-        "precision": 0.714,
-        "recall": 0.556
+        "precision": 0.667,
+        "recall": 0.444
       },
       {
         "class": "waterlogging",
         "truth": 3,
-        "matched": 3,
+        "matched": 2,
         "false_positives": 0,
         "precision": 1.0,
-        "recall": 1.0
+        "recall": 0.667
       }
     ]
   }

@@ -42,8 +42,8 @@ Evidence comes from three sources.
    the same failure of routine inspection.
 3. Engineering measurement. We built a 240 x 180 m reference ward (7 roads,
    23 known discrepancies, 5 classes) and ran five survey missions. Each
-   mission covered 100 % of the planned path (2,224 m, 112-186 frames). Mean
-   detection precision is 0.75, recall 0.84, F1 0.80, with 0.22 m mean
+   mission covered 100 % of the planned path (2,224 m, 186 frames). Mean
+   detection precision is 0.77, recall 0.83, F1 0.80, with 0.23 m mean
    localization error against the surveyed ground truth.
 
 The third source matters most: it shows that a camera alone is not enough and
@@ -278,8 +278,8 @@ each survey area is requested through the Digital Sky platform.
 Current TRL: 4. The complete workflow - coverage planning, simulated flight,
 multi-class detection, temporal fusion, georeferenced export and a live
 operations dashboard - is integrated and validated in a controlled environment.
-Five survey runs over the reference ward give mean precision 0.75, recall 0.84,
-F1 0.80 and 0.22 m localization error, with 100 % path coverage each time.
+Five survey runs over the reference ward give mean precision 0.77, recall 0.83,
+F1 0.80 and 0.23 m localization error, with 100 % path coverage each time.
 
 What is missing for TRL 5: flight on the real airframe, calibration against
 measured defects on real asphalt, and validation under wind, sun angle and

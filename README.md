@@ -24,7 +24,7 @@ plan coverage  ->  fly the path  ->  detect per frame  ->  fuse across frames  -
 | `audit/api.py` | REST + WebSocket API and the static dashboard |
 | `web/` | Mission-control dashboard: live map, detection feed, telemetry, trial evaluation |
 | `docs/` | API contract, Screen-1 dossier, deck builder, diagrams |
-| `tests/` | 16 tests across geometry, planning, perception, mission and API |
+| `tests/` | 22 tests across geometry, planning, perception, mission and API |
 
 ## Run it
 
@@ -51,10 +51,10 @@ Reference results, five seeds (20261123, 7, 42, 2026, 99):
 
 | Metric | Value |
 | --- | --- |
-| Precision (mean) | 0.753 |
-| Recall (mean) | 0.843 |
-| F1 (mean) | 0.796 |
-| Localization error (mean) | 0.22 m |
+| Precision (mean) | 0.774 |
+| Recall (mean) | 0.826 |
+| F1 (mean) | 0.799 |
+| Localization error (mean) | 0.23 m |
 | Path coverage | 100 % every run |
 
 Ground truth belongs to the simulator and is never passed to the detector;

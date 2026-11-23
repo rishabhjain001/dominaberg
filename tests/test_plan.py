@@ -7,9 +7,9 @@ def test_plan_covers_every_road_and_stays_inside():
     plan = plan_coverage(world, 35.0)
     assert plan.lane_count >= 5
     assert plan.path_length_m > 1000
-    for wp in plan.waypoints:
-        assert 0.0 <= wp.x <= world.width_m
-        assert 0.0 <= wp.y <= world.height_m
+    for x, y in plan.waypoints:
+        assert 0.0 <= x <= world.width_m
+        assert 0.0 <= y <= world.height_m
 
 
 def test_capture_spacing_is_dense_enough_for_confirmation():
