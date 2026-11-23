@@ -150,8 +150,8 @@ def _blob_radius(comp: dict) -> float:
 def _ring_ratio(gray: np.ndarray, comp: dict, centroid: tuple[float, float]) -> float:
     """Brightness of the surroundings relative to the blob interior.
 
-    A missing cover is a dark hole inside a bright collar, so the ratio is well
-    above one. A plain pothole reads close to one.
+    A missing cover is a very dark hole inside a slightly darker rim, so the
+    ratio is well above one. A plain pothole reads close to one.
     """
     r = _blob_radius(comp)
     half = int(max(comp["w"], comp["h"]) * 0.85) + 3

@@ -103,6 +103,7 @@ class Mission:
         self.flown: list[tuple[float, float]] = [(self.pose[0], self.pose[1])]
         self._since_capture = 1e9
         self._returning = False
+        self._next_id = 1
 
     # ------------------------------------------------------------------ state
     def snapshot(self) -> dict:
@@ -270,7 +271,7 @@ class Mission:
                 return None
             if t.hits >= CONFIRM_HITS:
                 t.confirmed = True
-                t.id = f"D-{len(self.detections) + 1:03d}"
+                t.id = self._new_id()
                 t.lat, t.lon = enu_to_latlon(t.x, t.y, self.world.origin_lat, self.world.origin_lon)
                 self.detections.append(t)
                 self._merge_confirmed(t)
@@ -293,10 +294,18 @@ class Mission:
         self._tracks.append(track)
         if CONFIRM_HITS <= 1:
             track.confirmed = True
-            track.id = f"D-{len(self.detections) + 1:03d}"
+            track.id = self._new_id()
             self.detections.append(track)
             return track
         return None
+
+    def _new_id(self) -> str:
+        """Monotonic register ID. Merging removes entries, so the list length
+        is not a safe counter: a reused number would give two live records the
+        same primary key in the exported register."""
+        det_id = f"D-{self._next_id:03d}"
+        self._next_id += 1
+        return det_id
 
     def _merge_confirmed(self, track: Track) -> None:
         """Collapse a second confirmed record of the same class at the same spot.

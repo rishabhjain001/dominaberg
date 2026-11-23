@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
+import threading
 import time
 from pathlib import Path
 
@@ -25,7 +26,8 @@ app = FastAPI(title="A.U.D.I.T. Mission Control", version=VERSION)
 _MISSIONS: dict[str, Mission] = {}
 _SUBSCRIBERS: dict[str, set[asyncio.Queue]] = {}
 _TASKS: dict[str, asyncio.Task] = {}
-_LAST_PUMP: dict[str, float] = {}
+_LAST_STEP: dict[str, float] = {}
+_LOCKS: dict[str, threading.Lock] = {}
 
 
 class MissionRequest(BaseModel):
@@ -53,21 +55,46 @@ def _broadcast(mission_id: str, events: list[dict]) -> None:
                 q.put_nowait(ev)
 
 
+def _lock(mission_id: str) -> threading.Lock:
+    lock = _LOCKS.get(mission_id)
+    if lock is None:
+        lock = threading.Lock()
+        _LOCKS[mission_id] = lock
+    return lock
+
+
+def _step(mission: Mission, dt_sim: float) -> list[dict]:
+    """Advance the mission once, under its own lock.
+
+    The timer task steps from a worker thread and a reader may step from the
+    event loop, so every call goes through the same lock.
+    """
+    with _lock(mission.id):
+        events = mission.step(dt_sim)
+    _LAST_STEP[mission.id] = time.monotonic()
+    return events
+
+
 def _pump(mission: Mission) -> None:
-    """Advance a running mission from wall-clock time.
+    """Advance a running mission by the time that has passed since the last step.
 
     The API steps missions on a timer, but a reader must never depend on that
-    timer still being alive. Pumping on read keeps the simulation correct after
-    a worker restart, a suspended tab, or a test client that owns no event loop.
+    timer still being alive: a worker restart, a suspended tab or a test client
+    with no event loop would otherwise freeze the mission. Time is counted from
+    the last step by either path, so a reader cannot make the mission run faster
+    than the wall clock.
     """
     if mission.status != "running":
         return
+    task = _TASKS.get(mission.id)
+    if task is not None and not task.done():
+        return
     now = time.monotonic()
-    last = _LAST_PUMP.get(mission.id, now)
-    _LAST_PUMP[mission.id] = now
-    dt_sim = min(4.0, max(mission.multiplier * TICK_S, (now - last) * mission.multiplier))
-    events = mission.step(dt_sim)
-    _broadcast(mission.id, events)
+    last = _LAST_STEP.get(mission.id, now - TICK_S)
+    dt_sim = min(4.0, (now - last) * mission.multiplier)
+    if dt_sim <= 0.05:
+        return
+    _broadcast(mission.id, _step(mission, dt_sim))
 
 
 async def _run_loop(mission_id: str) -> None:
@@ -76,8 +103,7 @@ async def _run_loop(mission_id: str) -> None:
         await asyncio.sleep(TICK_S)
         if mission.status != "running":
             continue
-        dt = mission.multiplier * TICK_S
-        events = await asyncio.to_thread(mission.step, dt)
+        events = await asyncio.to_thread(_step, mission, mission.multiplier * TICK_S)
         _broadcast(mission_id, events)
         if mission.status == "complete":
             break
