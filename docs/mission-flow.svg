@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="380" viewBox="0 0 960 380" role="img" aria-label="A.U.D.I.T. mission state machine">
+  <style>
+    .bg { fill: #070C16; }
+    .state { fill: #0E1626; stroke: #1F2E45; stroke-width: 1.5; }
+    .state-ok { fill: #0E1626; stroke: #34D399; stroke-width: 2; }
+    .state-warn { fill: #0E1626; stroke: #FBBF24; stroke-width: 2; }
+    .t { fill: #E8F0FA; font: 600 15px "DejaVu Sans", sans-serif; }
+    .s { fill: #93A6C0; font: 12px "DejaVu Sans", sans-serif; }
+    .lbl { fill: #2DD4BF; font: 600 12px "DejaVu Sans", sans-serif; letter-spacing: 1px; }
+    .ev { fill: #93A6C0; font: 12px "DejaVu Sans", sans-serif; }
+    .flow { stroke: #3B82F6; stroke-width: 2; fill: none; marker-end: url(#a); }
+    .flow-warn { stroke: #FBBF24; stroke-width: 2; fill: none; marker-end: url(#aw); }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#3B82F6" /></marker>
+    <marker id="aw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#FBBF24" /></marker>
+  </defs>
+  <rect class="bg" width="960" height="380" />
+  <text class="lbl" x="40" y="44">MISSION STATE MACHINE</text>
+
+  <rect class="state" x="40" y="80" width="150" height="76" rx="10" />
+  <text class="t" x="60" y="112">Idle</text>
+  <text class="s" x="60" y="134">plan shown, aircraft armed</text>
+
+  <rect class="state" x="250" y="80" width="150" height="76" rx="10" />
+  <text class="t" x="270" y="112">Flying</text>
+  <text class="s" x="270" y="134">coverage path, 8 m/s</text>
+
+  <rect class="state" x="460" y="80" width="150" height="76" rx="10" />
+  <text class="t" x="480" y="112">Returning</text>
+  <text class="s" x="480" y="134">battery reserve reached</text>
+
+  <rect class="state-ok" x="670" y="80" width="150" height="76" rx="10" />
+  <text class="t" x="690" y="112">Complete</text>
+  <text class="s" x="690" y="134">register ready to export</text>
+
+  <rect class="state-warn" x="460" y="220" width="150" height="76" rx="10" />
+  <text class="t" x="480" y="252">Paused</text>
+  <text class="s" x="480" y="274">operator hold, state kept</text>
+
+  <path class="flow" d="M 190 118 H 246" />
+  <text class="ev" x="192" y="106">start</text>
+  <path class="flow" d="M 400 118 H 456" />
+  <text class="ev" x="402" y="106">battery 18 %</text>
+  <path class="flow" d="M 610 118 H 666" />
+  <text class="ev" x="612" y="106">at home</text>
+  <path class="flow-warn" d="M 340 156 V 258 H 456" />
+  <text class="ev" x="346" y="196">pause</text>
+  <path class="flow" d="M 456 258 H 340 V 160" />
+  <text class="ev" x="404" y="278">resume</text>
+
+  <text class="s" x="40" y="336">Every transition emits an event on the WebSocket: status, tick, detection, log, complete.</text>
+  <text class="s" x="40" y="358">A reconnect receives a full snapshot first, so the dashboard never replays history it cannot see.</text>
+</svg>

@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>A.U.D.I.T. video scenes</title>
+<style>
+  :root {
+    --bg: #070C16; --surface: #0E1626; --surface-2: #142033; --border: #1F2E45;
+    --text: #E8F0FA; --muted: #93A6C0; --accent: #2DD4BF; --accent-2: #3B82F6;
+    --warn: #FBBF24; --ok: #34D399;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { overflow: hidden; }
+  body { background: #000; font-family: "DejaVu Sans", system-ui, sans-serif; color: var(--text); }
+  .scene {
+    width: 1920px; height: 1080px; position: relative; overflow: hidden;
+    background: radial-gradient(1200px 700px at 18% 12%, #12203A 0%, var(--bg) 60%);
+    padding: 96px 120px;
+  }
+  .kicker { color: var(--accent); font-size: 22px; letter-spacing: 3px; font-weight: 700; text-transform: uppercase; }
+  h1 { font-size: 104px; letter-spacing: -2px; line-height: 1.04; font-weight: 800; }
+  h2 { font-size: 60px; letter-spacing: -1px; line-height: 1.12; font-weight: 800; }
+  .lede { color: var(--muted); font-size: 30px; line-height: 1.5; }
+  .rule { height: 2px; background: linear-gradient(90deg, var(--accent), transparent); margin: 36px 0; }
+  .grid { display: grid; gap: 28px; }
+  .card {
+    background: linear-gradient(180deg, var(--surface) 0%, #0B1322 100%);
+    border: 1px solid var(--border); border-radius: 20px; padding: 34px 38px;
+  }
+  .stat { font-size: 78px; font-weight: 800; color: var(--accent); letter-spacing: -2px; }
+  .stat-label { font-size: 26px; font-weight: 700; margin-top: 6px; }
+  .stat-note { color: var(--muted); font-size: 20px; margin-top: 10px; }
+  .step-num { color: var(--accent); font-size: 20px; letter-spacing: 2px; font-weight: 700; }
+  .step-name { font-size: 32px; font-weight: 800; margin: 8px 0 14px; }
+  .step-body { color: var(--muted); font-size: 21px; line-height: 1.45; }
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  th, td { padding: 18px 22px; text-align: right; font-size: 25px; white-space: nowrap; border-bottom: 1px solid var(--border); }
+  th:first-child, td:first-child { text-align: left; }
+  thead th { color: var(--muted); font-size: 20px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; }
+  tbody tr:last-child td { color: var(--accent); font-weight: 800; border-bottom: none; }
+  .bars { display: grid; gap: 18px; margin-top: 10px; }
+  .bar-row { display: grid; grid-template-columns: 260px 1fr 90px; align-items: center; gap: 20px; font-size: 22px; }
+  .track { display: block; height: 18px; background: var(--surface-2); border-radius: 9px; overflow: hidden; }
+  .fill { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 9px; }
+  .pill { display: inline-block; padding: 10px 22px; border-radius: 999px; font-size: 20px; font-weight: 700; }
+  .pill-ok { background: rgba(52, 211, 153, .12); color: var(--ok); border: 1px solid rgba(52, 211, 153, .4); }
+  .foot { position: absolute; left: 120px; bottom: 66px; color: var(--muted); font-size: 20px; letter-spacing: 1px; }
+  .mono { font-family: "DejaVu Sans Mono", monospace; }
+</style>
+</head>
+<body>
+
+<section class="scene" id="s1">
+  <div style="position:absolute;left:120px;top:300px;width:8px;height:220px;background:var(--accent)"></div>
+  <div style="margin-left:60px">
+    <h1 style="font-size:132px">A.U.D.I.T.</h1>
+    <p class="lede" style="font-size:38px;color:var(--accent);margin-top:10px">Autonomous UAV Discrepancy Identification Trials</p>
+    <p class="lede" style="font-size:30px;margin-top:34px;max-width:1200px">
+      A repeatable aerial survey that turns a ward's roads into a georeferenced register of
+      potholes, missing covers, waterlogging, debris and pavement damage.
+    </p>
+    <div class="rule" style="width:900px"></div>
+    <p class="lede" style="font-size:24px;line-height:1.7">
+      Problem statement NAT-003-PS-AUDIT &nbsp;|&nbsp; Track II: Diploma and Higher Education<br>
+      Rishabh Jain, Guru Tegh Bahadur 4th Centenary Engineering College<br>
+      SEVA FIRST &mdash; Rashtriya Youth Innovation Challenge 2026
+    </p>
+  </div>
+</section>
+
+<section class="scene" id="s2">
+  <p class="kicker">The problem</p>
+  <h2 style="margin-top:18px;max-width:1500px">Roads are inspected by memory,<br>not by measurement</h2>
+  <div class="grid" style="grid-template-columns:repeat(3,1fr);margin-top:64px">
+    <div class="card"><div class="stat">4,446</div><div class="stat-label">pothole accidents</div><div class="stat-note">MoRTH, Road Accidents in India 2022</div></div>
+    <div class="card"><div class="stat">1,856</div><div class="stat-label">deaths on potholed roads</div><div class="stat-note">every road was somebody's beat</div></div>
+    <div class="card"><div class="stat">45&ndash;60 min</div><div class="stat-label">to inspect 2 km on foot</div><div class="stat-note">measured on a Delhi municipal road</div></div>
+  </div>
+  <p class="lede" style="margin-top:60px;font-size:30px;max-width:1560px">
+    A complaint arrives with a photo. A beat inspector carries paper. Neither produces a register,
+    a coordinate, or a second look. The gap is not vision &mdash; it is the workflow:
+    <span style="color:var(--text);font-weight:700">capture, confirm, georeference, export, repeat.</span>
+  </p>
+  <div class="foot">A.U.D.I.T. &nbsp;|&nbsp; NAT-003-PS-AUDIT &nbsp;|&nbsp; SEVA FIRST RYIC 2026</div>
+</section>
+
+<section class="scene" id="s3">
+  <p class="kicker">How it works</p>
+  <h2 style="margin-top:18px">One aircraft, one pass, one register</h2>
+  <div class="grid" style="grid-template-columns:repeat(5,1fr);margin-top:56px">
+    <div class="card"><div class="step-num">01</div><div class="step-name">Plan</div><div class="step-body">Boustrophedon coverage with 35&nbsp;% overlap. Lanes, path length and ETA before take-off.</div></div>
+    <div class="card"><div class="step-num">02</div><div class="step-name">Fly</div><div class="step-body">35&nbsp;m AGL, 8&nbsp;m/s. 40.4 &times; 30.3&nbsp;m footprint, 6.3&nbsp;cm per pixel.</div></div>
+    <div class="card"><div class="step-num">03</div><div class="step-name">Detect</div><div class="step-body">Carriageway mask, hull geometry and solidity, five classes, on board.</div></div>
+    <div class="card"><div class="step-num">04</div><div class="step-name">Confirm</div><div class="step-body">Two frames must agree within 3&nbsp;m. The position is the running mean.</div></div>
+    <div class="card"><div class="step-num">05</div><div class="step-name">Export</div><div class="step-body">CSV for the works ledger, GeoJSON for the GIS, markdown for the file.</div></div>
+  </div>
+  <div class="grid" style="grid-template-columns:repeat(4,1fr);margin-top:52px">
+    <div class="card" style="padding:26px 30px"><div class="stat" style="font-size:46px">2,224 m</div><div class="stat-note">planned path, reference ward</div></div>
+    <div class="card" style="padding:26px 30px"><div class="stat" style="font-size:46px">23</div><div class="stat-note">planted discrepancies, 5 classes</div></div>
+    <div class="card" style="padding:26px 30px"><div class="stat" style="font-size:46px">100 %</div><div class="stat-note">path coverage every run</div></div>
+    <div class="card" style="padding:26px 30px"><div class="stat" style="font-size:46px">0.23 m</div><div class="stat-note">mean localization error</div></div>
+  </div>
+  <div class="foot">A.U.D.I.T. &nbsp;|&nbsp; NAT-003-PS-AUDIT &nbsp;|&nbsp; SEVA FIRST RYIC 2026</div>
+</section>
+
+<section class="scene" id="s4">
+  <p class="kicker">Trial result</p>
+  <h2 style="margin-top:18px">Five survey runs, scored against held-out truth</h2>
+  <div class="grid" style="grid-template-columns:1.25fr 1fr;gap:56px;margin-top:46px">
+    <div class="card" style="padding:26px 30px">
+      <table>
+        <thead><tr><th>Seed</th><th>Precision</th><th>Recall</th><th>F1</th><th>Loc. error</th><th>Coverage</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">20261123</td><td>0.958</td><td>1.000</td><td>0.979</td><td>0.20 m</td><td>100 %</td></tr>
+          <tr><td class="mono">7</td><td>0.792</td><td>0.826</td><td>0.809</td><td>0.22 m</td><td>100 %</td></tr>
+          <tr><td class="mono">42</td><td>0.654</td><td>0.739</td><td>0.694</td><td>0.24 m</td><td>100 %</td></tr>
+          <tr><td class="mono">2026</td><td>0.760</td><td>0.826</td><td>0.792</td><td>0.27 m</td><td>100 %</td></tr>
+          <tr><td class="mono">99</td><td>0.708</td><td>0.739</td><td>0.723</td><td>0.23 m</td><td>100 %</td></tr>
+          <tr><td>Mean</td><td>0.774</td><td>0.826</td><td>0.799</td><td>0.23 m</td><td>100 %</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <p style="font-size:22px;letter-spacing:2px;color:var(--muted);font-weight:700">PER-CLASS RECALL</p>
+      <div class="bars">
+        <div class="bar-row"><span>Pothole</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="mono">9/9</span></div>
+        <div class="bar-row"><span>Missing cover</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="mono">4/4</span></div>
+        <div class="bar-row"><span>Waterlogging</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="mono">3/3</span></div>
+        <div class="bar-row"><span>Debris</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="mono">3/3</span></div>
+        <div class="bar-row"><span>Pavement damage</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="mono">4/4</span></div>
+      </div>
+      <p class="stat-note" style="margin-top:26px;line-height:1.5">
+        A report is correct when its class matches and its position is within 2&nbsp;m of the plant.
+        The simulator never hands ground truth to the detector.
+      </p>
+    </div>
+  </div>
+  <div class="foot">A.U.D.I.T. &nbsp;|&nbsp; NAT-003-PS-AUDIT &nbsp;|&nbsp; SEVA FIRST RYIC 2026</div>
+</section>
+
+<section class="scene" id="s5">
+  <p class="kicker">Cost, plan and readiness</p>
+  <h2 style="margin-top:18px">INR 1.2 lakh replaces a walking beat</h2>
+  <div class="grid" style="grid-template-columns:repeat(3,1fr);margin-top:54px">
+    <div class="card">
+      <p style="font-size:22px;letter-spacing:2px;color:var(--muted);font-weight:700">BILL OF MATERIALS</p>
+      <table style="margin-top:12px">
+        <tbody>
+          <tr><td>Airframe, motors, ESCs</td><td>18,000</td></tr>
+          <tr><td>Flight controller with GPS</td><td>12,000</td></tr>
+          <tr><td>Edge computer, 8 GB</td><td>35,000</td></tr>
+          <tr><td>Nadir camera, global shutter</td><td>22,000</td></tr>
+          <tr><td>Batteries and charger</td><td>24,000</td></tr>
+          <tr><td>Radio, wiring, enclosure</td><td>9,000</td></tr>
+          <tr><td style="color:var(--accent)">Total</td><td style="color:var(--accent)">1,20,000</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <p style="font-size:22px;letter-spacing:2px;color:var(--muted);font-weight:700">75-DAY PLAN</p>
+      <div style="margin-top:18px;display:grid;gap:20px">
+        <div><div class="step-name" style="font-size:25px;margin:0">Days 1&ndash;15 &middot; Field calibration</div><div class="step-body">50 measured defects, thresholds fitted to local asphalt.</div></div>
+        <div><div class="step-name" style="font-size:25px;margin:0">Days 16&ndash;30 &middot; Flight integration</div><div class="step-body">Pipeline on the companion computer, gimbal, frame timing.</div></div>
+        <div><div class="step-name" style="font-size:25px;margin:0">Days 31&ndash;45 &middot; Autonomy and safety</div><div class="step-body">Geofence, return to home, wind limits, lost link.</div></div>
+        <div><div class="step-name" style="font-size:25px;margin:0">Days 46&ndash;60 &middot; Municipal pilot</div><div class="step-body">Two wards, four weekly sorties, engineer review.</div></div>
+        <div><div class="step-name" style="font-size:25px;margin:0">Days 61&ndash;75 &middot; Handover</div><div class="step-body">GIS import, operator manual, training.</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <p style="font-size:22px;letter-spacing:2px;color:var(--muted);font-weight:700">READINESS</p>
+      <p style="font-size:64px;font-weight:800;color:var(--accent);margin-top:18px">TRL 4</p>
+      <p class="step-body" style="margin-top:12px">Integrated workflow validated in a controlled environment.</p>
+      <div class="rule" style="width:100%;margin:26px 0"></div>
+      <p class="step-body">TRL 5 needs the airframe and measured defects. TRL 6 needs two wards and a signed pilot report &mdash; both inside this 75-day plan.</p>
+      <p class="stat-note" style="margin-top:22px">Software cost: zero. Python, OpenCV, FastAPI, ArduPilot, QGIS.</p>
+    </div>
+  </div>
+  <div class="foot">A.U.D.I.T. &nbsp;|&nbsp; NAT-003-PS-AUDIT &nbsp;|&nbsp; SEVA FIRST RYIC 2026</div>
+</section>
+
+
+<section class="scene" id="s7">
+  <p class="kicker">Perception</p>
+  <h2 style="margin-top:18px">Five classes separated by geometry, not by a trained model</h2>
+  <div class="grid" style="grid-template-columns:repeat(5,1fr);margin-top:56px">
+    <div class="card"><div class="step-num">POTHOLE</div><div class="step-body" style="margin-top:14px">Small, solid, dark. No distinct rim.<br><br><span class="mono" style="color:var(--accent)">hull 0.2-3.8 m&sup2;</span></div></div>
+    <div class="card"><div class="step-num" style="color:#A855F7">MISSING COVER</div><div class="step-body" style="margin-top:14px">Very dark hole inside a darker rim.<br><br><span class="mono" style="color:var(--accent)">ring ratio &gt; 2.6</span></div></div>
+    <div class="card"><div class="step-num" style="color:#38BDF8">WATERLOGGING</div><div class="step-body" style="margin-top:14px">Large, solid, dark, low saturation.<br><br><span class="mono" style="color:var(--accent)">hull &gt; 4 m&sup2;</span></div></div>
+    <div class="card"><div class="step-num" style="color:#EAB308">DEBRIS</div><div class="step-body" style="margin-top:14px">Bright compact pile on asphalt.<br><br><span class="mono" style="color:var(--accent)">0.6-9 m&sup2;</span></div></div>
+    <div class="card"><div class="step-num" style="color:#FB7185">PAVEMENT DAMAGE</div><div class="step-body" style="margin-top:14px">Thin, sparse crack network.<br><br><span class="mono" style="color:var(--accent)">solid &lt; 0.45</span></div></div>
+  </div>
+  <div class="grid" style="grid-template-columns:repeat(3,1fr);margin-top:56px">
+    <div class="card"><div class="step-name" style="font-size:26px">Filled hull</div><div class="step-body">Measures the true footprint, even when only the rim of a large pool responds.</div></div>
+    <div class="card"><div class="step-name" style="font-size:26px">Solidity</div><div class="step-body">Share of the footprint that is genuinely dark. A pool is solid; a crack web is sparse.</div></div>
+    <div class="card"><div class="step-name" style="font-size:26px">Two agreeing frames</div><div class="step-body">Nothing is reported until a second frame lands within three metres.</div></div>
+  </div>
+  <div class="foot">A.U.D.I.T. &nbsp;|&nbsp; NAT-003-PS-AUDIT &nbsp;|&nbsp; SEVA FIRST RYIC 2026</div>
+</section>
+
+<section class="scene" id="s6">
+  <div style="position:absolute;left:120px;top:330px;width:8px;height:200px;background:var(--accent)"></div>
+  <div style="margin-left:60px">
+    <h1 style="font-size:96px">A road register,<br>not a photograph album.</h1>
+    <p class="lede" style="margin-top:38px;font-size:30px;max-width:1300px">
+      Working software, five reproducible trial runs, and an export a municipal engineer can act on.
+      The next 75 days take it onto the airframe and into two wards.
+    </p>
+    <p class="lede" style="margin-top:46px;font-size:24px">
+      github.com/rishabhjain001/dominaberg &nbsp;&middot;&nbsp; #SEVA-2026-NAT-003-PS-AUDIT
+    </p>
+  </div>
+</section>
+
+</body>
+</html>

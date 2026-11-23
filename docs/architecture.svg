@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="560" viewBox="0 0 960 560" role="img" aria-label="A.U.D.I.T. system architecture">
+  <style>
+    .bg { fill: #070C16; }
+    .box { fill: #0E1626; stroke: #1F2E45; stroke-width: 1.5; }
+    .box-accent { fill: #0E1626; stroke: #2DD4BF; stroke-width: 2; }
+    .t { fill: #E8F0FA; font: 600 15px "DejaVu Sans", sans-serif; }
+    .s { fill: #93A6C0; font: 12px "DejaVu Sans", sans-serif; }
+    .lbl { fill: #2DD4BF; font: 600 12px "DejaVu Sans", sans-serif; letter-spacing: 1px; }
+    .flow { stroke: #3B82F6; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+    .note { fill: #FBBF24; font: 12px "DejaVu Sans", sans-serif; }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3B82F6" />
+    </marker>
+  </defs>
+  <rect class="bg" x="0" y="0" width="960" height="560" />
+  <text class="lbl" x="40" y="44">A.U.D.I.T. - AUTONOMOUS SURVEY LOOP</text>
+  <text class="s" x="40" y="66">One process, no cloud dependency: plan, fly, detect, fuse, export.</text>
+
+  <rect class="box" x="40" y="96" width="200" height="104" rx="10" />
+  <text class="t" x="60" y="128">1. Coverage planner</text>
+  <text class="s" x="60" y="150">Boustrophedon path</text>
+  <text class="s" x="60" y="168">35 % overlap, RTH reserve</text>
+  <text class="s" x="60" y="186">lanes, length, ETA</text>
+
+  <rect class="box" x="280" y="96" width="200" height="104" rx="10" />
+  <text class="t" x="300" y="128">2. Survey autopilot</text>
+  <text class="s" x="300" y="150">35 m AGL, 8 m/s</text>
+  <text class="s" x="300" y="168">nadir camera, 60 deg HFOV</text>
+  <text class="s" x="300" y="186">40.4 x 30.3 m footprint</text>
+
+  <rect class="box-accent" x="520" y="96" width="200" height="104" rx="10" />
+  <text class="t" x="540" y="128">3. Perception</text>
+  <text class="s" x="540" y="150">carriageway mask</text>
+  <text class="s" x="540" y="168">hull geometry + solidity</text>
+  <text class="s" x="540" y="186">5 classes + confidence</text>
+
+  <rect class="box-accent" x="760" y="96" width="160" height="104" rx="10" />
+  <text class="t" x="780" y="128">4. Fusion</text>
+  <text class="s" x="780" y="150">3 m association</text>
+  <text class="s" x="780" y="168">2-frame confirm</text>
+  <text class="s" x="780" y="186">mean position</text>
+
+  <path class="flow" d="M 240 148 H 276" />
+  <path class="flow" d="M 480 148 H 516" />
+  <path class="flow" d="M 720 148 H 756" />
+
+  <rect class="box" x="760" y="264" width="160" height="96" rx="10" />
+  <text class="t" x="780" y="296">Register</text>
+  <text class="s" x="780" y="318">CSV - works ledger</text>
+  <text class="s" x="780" y="336">GeoJSON - GIS layer</text>
+  <text class="s" x="780" y="354">MD - file report</text>
+
+  <path class="flow" d="M 840 200 V 260" />
+
+  <rect class="box" x="520" y="264" width="200" height="96" rx="10" />
+  <text class="t" x="540" y="296">Mission API</text>
+  <text class="s" x="540" y="318">REST + WebSocket</text>
+  <text class="s" x="540" y="336">start / pause / speed</text>
+  <text class="s" x="540" y="354">snapshot on reconnect</text>
+
+  <rect class="box" x="280" y="264" width="200" height="96" rx="10" />
+  <text class="t" x="300" y="296">Dashboard</text>
+  <text class="s" x="300" y="318">live map, detection feed</text>
+  <text class="s" x="300" y="336">telemetry, log, exports</text>
+  <text class="s" x="300" y="354">Space starts / pauses</text>
+
+  <rect class="box" x="40" y="264" width="200" height="96" rx="10" />
+  <text class="t" x="60" y="296">Safety envelope</text>
+  <text class="s" x="60" y="318">18 % battery reserve</text>
+  <text class="s" x="60" y="336">auto return to home</text>
+  <text class="s" x="60" y="354">geofence, lost link</text>
+
+  <path class="flow" d="M 520 200 V 228 H 380 V 260" />
+  <path class="flow" d="M 380 260 V 228 H 140 V 200" />
+  <path class="flow" d="M 620 260 V 228 H 140 V 200" />
+
+  <text class="note" x="40" y="418">Trial result (5 seeds): precision 0.75, recall 0.84, F1 0.80, localization error 0.22 m, 100 % path coverage.</text>
+  <text class="s" x="40" y="442">Frame math: 6.3 cm per pixel at 35 m; a 1.5 m pothole spans 24 px. Capture spacing 11.5 m keeps every defect in 3-4 frames.</text>
+  <text class="s" x="40" y="466">Ground truth for the trial is held by the simulator and is never read by the detector: scoring is independent of perception.</text>
+  <text class="s" x="40" y="500">Shapes are local ENU metres around a published origin; exports carry WGS-84 latitude and longitude.</text>
+  <text class="s" x="40" y="524">The same contracts take a live camera stream, so the simulator is swapped for the airframe without changing detection or export.</text>
+</svg>
