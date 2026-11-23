@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A.U.D.I.T. Mission Control</title>
+  <meta name="description" content="Mission control for A.U.D.I.T., an autonomous UAV discrepancy identification trial.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230E1626'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%232DD4BF'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#mission-map">Skip to mission map</a>
+
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <div>
+        <h1 class="brand-name">A.U.D.I.T.</h1>
+        <p class="brand-sub">Autonomous UAV Discrepancy Identification Trials - Mission Control</p>
+      </div>
+    </div>
+    <div class="header-status">
+      <span class="mission-chip mono" id="mission-id" hidden></span>
+      <span class="status-pill" id="status-pill" data-state="idle" role="status" aria-live="polite">Idle</span>
+    </div>
+  </header>
+
+  <p class="banner" id="error-banner" role="alert" hidden>
+    <span class="banner-text" id="error-text"></span>
+    <button class="btn btn-small" type="button" id="error-retry">Retry</button>
+  </p>
+
+  <main class="layout">
+    <div class="map-column">
+      <section class="panel map-panel" aria-labelledby="map-heading">
+        <div class="panel-head">
+          <h2 id="map-heading">Live map</h2>
+          <p class="panel-meta mono" id="map-meta">Waiting for scenario</p>
+        </div>
+        <div class="map-frame" id="map-frame">
+          <canvas id="mission-map" tabindex="0" role="img"
+            aria-label="Mission map. Scenario not loaded yet."></canvas>
+          <div class="map-skeleton skeleton" id="map-skeleton" aria-hidden="true"></div>
+          <div class="pin-popover" id="pin-popover" role="dialog" aria-label="Detection detail" hidden>
+            <button class="popover-close" id="popover-close" type="button" aria-label="Close detection detail">&times;</button>
+            <img class="popover-crop" id="popover-crop" src="" alt="" width="96" height="96">
+            <div class="popover-body">
+              <div class="popover-head">
+                <span class="chip" id="popover-class">&mdash;</span>
+                <span class="popover-id mono" id="popover-id">&mdash;</span>
+              </div>
+              <p class="popover-conf mono" id="popover-confidence">&mdash;</p>
+              <p class="popover-coord mono" id="popover-coord">&mdash;</p>
+            </div>
+          </div>
+        </div>
+        <p class="map-hint">Click a detection pin to inspect its crop and confidence.</p>
+      </section>
+
+      <section class="panel telemetry" aria-labelledby="telemetry-heading">
+        <h2 class="sr-only" id="telemetry-heading">Telemetry</h2>
+        <dl class="metrics">
+          <div class="metric">
+            <dt id="label-coverage">Coverage</dt>
+            <dd class="metric-value mono skeleton-text" id="metric-coverage" aria-labelledby="label-coverage">&mdash;</dd>
+          </div>
+          <div class="metric">
+            <dt id="label-distance">Distance</dt>
+            <dd class="metric-value mono skeleton-text" id="metric-distance" aria-labelledby="label-distance">&mdash;</dd>
+          </div>
+          <div class="metric">
+            <dt id="label-battery">Battery</dt>
+            <dd class="metric-value mono skeleton-text" id="metric-battery" aria-labelledby="label-battery">&mdash;</dd>
+          </div>
+          <div class="metric">
+            <dt id="label-frames">Frames</dt>
+            <dd class="metric-value mono skeleton-text" id="metric-frames" aria-labelledby="label-frames">&mdash;</dd>
+          </div>
+          <div class="metric">
+            <dt id="label-unique">Discrepancies</dt>
+            <dd class="metric-value mono skeleton-text" id="metric-unique" aria-labelledby="label-unique">&mdash;</dd>
+          </div>
+          <div class="metric">
+            <dt id="label-elapsed">Elapsed</dt>
+            <dd class="metric-value mono skeleton-text" id="metric-elapsed" aria-labelledby="label-elapsed">&mdash;</dd>
+          </div>
+        </dl>
+      </section>
+    </div>
+
+    <section class="panel mission-panel" aria-labelledby="mission-heading">
+      <div class="panel-head">
+        <h2 id="mission-heading">Mission setup</h2>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="seed">Seed</label>
+        <input class="input mono" id="seed" type="number" step="1" min="0" inputmode="numeric"
+          value="20261123" autocomplete="off" spellcheck="false">
+        <p class="field-hint">Same seed reproduces the same survey.</p>
+      </div>
+
+      <div class="field">
+        <div class="field-row">
+          <label class="field-label" for="altitude">Altitude</label>
+          <output class="field-value mono" id="altitude-value" for="altitude">35 m</output>
+        </div>
+        <input class="slider" id="altitude" type="range" min="20" max="50" step="1" value="35">
+      </div>
+
+      <div class="field">
+        <div class="field-row">
+          <label class="field-label" for="speed">Cruise speed</label>
+          <output class="field-value mono" id="speed-value" for="speed">8 m/s</output>
+        </div>
+        <input class="slider" id="speed" type="range" min="4" max="12" step="1" value="8">
+      </div>
+
+      <dl class="plan-summary">
+        <div class="plan-cell">
+          <dt>Lanes</dt>
+          <dd class="mono skeleton-text" id="plan-lanes">&mdash;</dd>
+        </div>
+        <div class="plan-cell">
+          <dt>Path length</dt>
+          <dd class="mono skeleton-text" id="plan-length">&mdash;</dd>
+        </div>
+      </dl>
+
+      <div class="actions">
+        <button class="btn btn-primary" type="button" id="launch" disabled>Launch mission</button>
+        <button class="btn" type="button" id="pause" disabled>Pause</button>
+        <button class="btn" type="button" id="reset" disabled>Reset</button>
+      </div>
+      <p class="field-hint"><kbd>Space</kbd> starts or pauses a mission.</p>
+    </section>
+
+    <aside class="rail" aria-label="Mission results">
+      <section class="panel feed" aria-labelledby="feed-heading">
+        <div class="panel-head">
+          <h2 id="feed-heading">Detection feed</h2>
+          <span class="count mono" id="feed-count">0</span>
+        </div>
+        <p class="empty" id="feed-empty">No discrepancies yet. Launch a mission to begin.</p>
+        <ul class="feed-list" id="feed-list"></ul>
+      </section>
+
+      <section class="panel log" aria-labelledby="log-heading">
+        <div class="panel-head">
+          <h2 id="log-heading">Mission log</h2>
+        </div>
+        <ol class="log-list" id="log-list" role="log" aria-label="Mission log, newest first"></ol>
+      </section>
+
+      <section class="panel scorecard" id="scorecard" aria-labelledby="scorecard-heading" hidden>
+        <div class="panel-head">
+          <h2 id="scorecard-heading">Trial evaluation</h2>
+          <span class="chip chip--ok">Complete</span>
+        </div>
+        <dl class="score-grid">
+          <div class="score-cell">
+            <dt>Precision</dt>
+            <dd class="mono" id="score-precision">&mdash;</dd>
+          </div>
+          <div class="score-cell">
+            <dt>Recall</dt>
+            <dd class="mono" id="score-recall">&mdash;</dd>
+          </div>
+          <div class="score-cell">
+            <dt>F1</dt>
+            <dd class="mono" id="score-f1">&mdash;</dd>
+          </div>
+          <div class="score-cell">
+            <dt>Mean localization error</dt>
+            <dd class="mono" id="score-error">&mdash;</dd>
+          </div>
+        </dl>
+        <table class="score-table">
+          <caption class="sr-only">Per-class detection performance</caption>
+          <thead>
+            <tr>
+              <th scope="col">Class</th>
+              <th scope="col" class="num">Matched</th>
+              <th scope="col" class="num">Precision</th>
+            </tr>
+          </thead>
+          <tbody id="score-classes"></tbody>
+        </table>
+        <div class="exports" id="exports">
+          <a class="btn btn-small is-disabled" id="export-csv" aria-disabled="true" tabindex="-1">CSV</a>
+          <a class="btn btn-small is-disabled" id="export-geojson" aria-disabled="true" tabindex="-1">GeoJSON</a>
+          <a class="btn btn-small is-disabled" id="export-md" aria-disabled="true" tabindex="-1">Markdown</a>
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <noscript>
+    <p class="banner" role="alert">A.U.D.I.T. Mission Control needs JavaScript enabled.</p>
+  </noscript>
+
+  <script src="/app.js"></script>
+</body>
+</html>
