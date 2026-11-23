@@ -51,3 +51,21 @@ def test_websocket_sends_a_snapshot_first():
 
 def test_unknown_mission_returns_404():
     assert client.get("/api/missions/nope").status_code == 404
+
+
+def test_a_reader_cannot_outpace_the_clock():
+    """A read advances only the time since the last step; it adds no floor."""
+    created = client.post("/api/missions", json={"seed": 2026, "multiplier": 16}).json()
+    mid = created["mission_id"]
+    client.post(f"/api/missions/{mid}/start")
+
+    def elapsed_s():
+        return client.get(f"/api/missions/{mid}").json()["telemetry"]["elapsed_s"]
+
+    before = elapsed_s()
+    after = elapsed_s()
+    assert after - before <= 1.0
+
+    time.sleep(0.4)
+    gap = elapsed_s() - after
+    assert gap <= 0.4 * 16 + 4.5

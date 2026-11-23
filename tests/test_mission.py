@@ -49,3 +49,11 @@ def test_snapshot_is_serialisable():
     snap = m.snapshot()
     assert snap["mission_id"] == m.id
     assert len(snap["detections"]) == len(m.detections)
+
+
+def test_register_ids_stay_unique_when_records_merge():
+    """Merging removes an entry, so a length-based counter would reuse a key."""
+    m = _finished()
+    ids = [d.id for d in m.detections]
+    assert ids
+    assert len(ids) == len(set(ids))

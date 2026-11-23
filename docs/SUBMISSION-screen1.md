@@ -132,8 +132,8 @@ drone.
    shadows never reach the register.
 3. Footprint geometry, not blob area. Each blob is measured by the filled hull
    of its response and by the share of that footprint that is genuinely dark.
-   This separates a water pool (large, solid), a missing cover (small, solid,
-   bright collar), a pothole (small, solid, no collar) and a crack network
+   This separates a water pool (large, solid), a missing cover (very dark hole
+   inside a darker rim), a pothole (small, solid, no rim) and a crack network
    (thin, sparse) without a trained model.
 4. Closed loop, on the edge. Planning, flight, detection, fusion and export run
    in one process with no cloud dependency, so a ward with poor connectivity

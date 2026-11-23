@@ -100,10 +100,13 @@ def _pump(mission: Mission) -> None:
 async def _run_loop(mission_id: str) -> None:
     mission = _MISSIONS[mission_id]
     while mission.status in ("running", "paused"):
-        await asyncio.sleep(TICK_S)
+        if mission.status != "running":
+            await asyncio.sleep(TICK_S)
+            continue
+        await asyncio.sleep(1.0 / mission.multiplier)
         if mission.status != "running":
             continue
-        events = await asyncio.to_thread(_step, mission, mission.multiplier * TICK_S)
+        events = await asyncio.to_thread(_step, mission, 1.0)
         _broadcast(mission_id, events)
         if mission.status == "complete":
             break
@@ -206,7 +209,11 @@ async def export_geojson(mission_id: str):
 @app.get("/api/missions/{mission_id}/report.md")
 async def export_markdown(mission_id: str):
     mission = _mission(mission_id)
-    return PlainTextResponse(to_markdown(mission), media_type="text/markdown")
+    return PlainTextResponse(
+        to_markdown(mission),
+        media_type="text/markdown",
+        headers={"Content-Disposition": f'attachment; filename="{mission_id}-discrepancies.md"'},
+    )
 
 
 @app.websocket("/ws/missions/{mission_id}")

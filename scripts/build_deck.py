@@ -249,8 +249,8 @@ def slide_perception(prs, page):
     s = blank(prs)
     header(s, "Screen-1 point 6 - novelty", "Five defect classes separated by geometry alone")
     rows = [["Class", "Signature", "Gate"],
-            ["Pothole", "small, solid, dark, no bright collar", "hull 0.2-3.8 m2, solid > 0.5"],
-            ["Missing cover", "small, solid, bright collar", "ring ratio > 2.6, hull < 1.7 m2"],
+            ["Pothole", "small, solid, dark, no distinct rim", "hull 0.2-3.8 m2, solid > 0.5"],
+            ["Missing cover", "very dark hole, darker rim", "ring ratio > 2.6, hull < 1.7 m2"],
             ["Waterlogging", "large, solid, dark, low saturation", "hull > 4 m2, solid > 0.5"],
             ["Debris", "bright compact pile on asphalt", "hull 0.6-9 m2, circ > 0.22"],
             ["Pavement damage", "thin sparse crack network", "solid < 0.45, hull > 0.6 m2"]]
